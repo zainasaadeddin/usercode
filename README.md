@@ -41,16 +41,20 @@ Let’s begin this lab to develop and deploy an end-to-end web application using
 1. set up the AWS CLI and AWS Amplify CLI on your local system on your machine.
 
 Execute the following commands to install the AWS CLI 2:
+
+```
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 
 unzip awscliv2.zip
 
 ./aws/install
+```
 
 Execute the following command to install the AWS Amplify CLI:
 
+```
 npm install -y --global @aws-amplify/cli
-
+```
 
 Inside the visual studio code:
 
