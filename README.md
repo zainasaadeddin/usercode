@@ -246,6 +246,388 @@ If all the resources were set correctly, we’ll get the following response in t
 
 
 
+## Create a Lambda Function
+
+In AWS Amplify, a function refers to an AWS Lambda function that can be integrated to communicate and perform certain tasks for the back-end services of our application. Lambda functions are an essential component of Amazon’s serverless computing platform, enabling a scalable and cost-effective way to run code without the need to manage servers or infrastructure. These functions can be written in various programming languages.
+
+In this stage, you’ll configure a Lambda function to act as a serverless back-end service to manage the course data on the DynamoDB table and communicate with the client React application. However, we won’t deploy it to the AWS Cloud yet and only configure it locally. If the Lambda function and all the Amplify-configured resources configured till now are deployed to the AWS Cloud, the architecture diagram of our planned AWS infrastructure would be as follows:
+
+Add a Lambda function: To add a Lambda function, follow these steps:
+To begin initializing a function for this Amplify project, execute the following command in the VS Code workspace terminal on the right:
+
+*amplify add function*
+
+Select the “Lambda function (serverless function)” option and press the “Enter” key to create a single serverless Lambda function:
+? Select which capability you want to add: (Use arrow keys)
+❯ Lambda function (serverless function) 
+  Lambda layer (shared code & resource used across functions)
+
+
+Type “LambdaBackendService” in the prompt that appears and press the “Enter” key to set LambdaBackendService as the name of the Lambda function:
+
+? Provide an AWS Lambda function name: LambdaBackendService
+
+Select the “NodeJS” runtime and press the “Enter” key:
+? Choose the runtime that you want to use: (Use arrow keys)
+  .NET 6 
+  Go 
+  Java 
+❯ NodeJS 
+  Python 
+
+Select the default “Hello World” option in the next prompt and press the “Enter” key. This will create our Lambda function with a very basic template. We’ll add our code to handle the complex use case of our application once Amplify creates the function locally.
+? Choose the function template that you want to use: (Use arrow keys)
+  AppSync - GraphQL API request (with IAM) 
+  CRUD function for DynamoDB (Integration with API Gateway) 
+  GraphQL Lambda Authorizer 
+❯ Hello World 
+  Lambda trigger 
+  Serverless ExpressJS function (Integration with API Gateway)
+
+Type “n” and press the “Enter” key to not configure any additional advanced Lambda function setting because we don’t need it.
+? Do you want to configure advanced settings? (y/N) n
+
+Type “n” and press the “Enter” key to keep the existing Lambda function code.
+? Do you want to edit the local lambda function now? (y/N) n
+
+Once done, press any key to proceed ahead.
+? Press enter to continue 
+
+Once Amplify locally creates the configuration files for the Lambda function, we’ll get the following message in the terminal:
+✅ Successfully added resource LambdaBackendService locally.
+
+
+As discussed previously, let’s finally change the “Hello World” template code in our Lambda function to act as an intermediary between our DynamoDb storage and the REST API we’ll create in a later task.
+To do so, we need to navigate to the index.js file of the Lambda function, which represents its main code file. Execute the following command to understand where this file is located and quickly open it in the VS Code workspace:
+
+code /usercode/react-client-app/amplify/backend/function/LambdaBackendService/src/index.js
+
+
+Copy the code below and replace the entire code in the index.js file with it.
+
+
+```
+/**
+* @type {import('@types/aws-lambda').APIGatewayProxyHandler}
+*/
+// Importing AWS DynamoDB SDK files for JavaScript
+const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const {
+ GetCommand, PutCommand, ScanCommand, UpdateCommand, DeleteCommand, DynamoDBDocumentClient,
+} = require('@aws-sdk/lib-dynamodb');
+
+// Client configurations
+const config = {
+ region: 'us-east-1',
+};
+
+// Defining table name set by AWS Amplify
+const tableName = 'coursesTable-dev';
+
+// Configuring AWS DynamoDB client
+const client = new DynamoDBClient(config);
+const documentClient = DynamoDBDocumentClient.from(client);
+
+// The following custom function fetches a specific course in the
+// DynamoDB database
+async function getItemDB(id) {
+ if(!id && id !== 0) { return null; }
+ try {
+   const command = new GetCommand({
+     TableName: tableName,
+     Key: {
+       ID: Number(id),
+     },
+   });
+   const response = await documentClient.send(command);
+   return response;
+ } catch (err) {
+   console.error(err);
+   return null;
+ }
+}
+
+// The following custom function fetches all course IDs in the
+// DynamoDB database
+async function getAllItemsDB() {
+ try {
+   const command = new ScanCommand({
+     TableName: tableName,
+     ProjectionExpression: 'ID',
+   });
+
+   const response = await documentClient.send(command);
+   const coursesList = [];
+   await Promise.all(response.Items.map(async (item) => {
+     const course = await getItemDB(item.ID);
+     if (course) { coursesList.push(course.Item); }
+   }));
+   return coursesList;
+ } catch (err) {
+   return { error: err.message };
+ }
+}
+
+// The following custom function adds a new course in the
+// DynamoDB database
+async function putItemDB(courseObject) {
+ try {
+   const command = new PutCommand({
+     TableName: tableName,
+     Item: {
+       ID: Number(courseObject.id),
+       CourseName: courseObject.courseName,
+       CoverArt: decodeURIComponent(courseObject.courseCoverArt),
+       CourseUrl: decodeURIComponent(courseObject.courseUrl),
+       Author: courseObject.courseAuthor,
+     },
+   });
+
+   const response = await documentClient.send(command);
+   return response;
+ } catch (err) {
+   return { error: err.message };
+ }
+}
+
+// The following custom function updates an existing course in the
+// DynamoDB database
+async function updateItemDB(courseObject) {
+ try {
+   const command = new UpdateCommand({
+     TableName: tableName,
+     Key: {
+       ID: Number(courseObject.id),
+     },
+     UpdateExpression: 'SET CourseName = :name, CourseUrl = :url, CoverArt = :coverart, Author = :author',
+     ExpressionAttributeValues: {
+       ':name': courseObject.courseName,
+       ':coverart': decodeURIComponent(courseObject.courseCoverArt),
+       ':url': decodeURIComponent(courseObject.courseUrl),
+       ':author': courseObject.courseAuthor,
+     },
+     ReturnValues: 'ALL_NEW',
+   });
+
+   const response = await documentClient.send(command);
+   return response;
+ } catch (err) {
+   return { error: err.message };
+ }
+}
+
+// The following custom function fetches all course IDs in the
+// DynamoDB database
+async function deleteItemDB(id) {
+ try {
+   const command = new DeleteCommand({
+     TableName: tableName,
+     Key: {
+       ID: Number(id),
+     },
+   });
+
+   const response = await documentClient.send(command);
+   return response;
+ } catch (err) {
+   return { error: err.message };
+ }
+}
+
+// The following custom function fetches all course IDs in the
+// DynamoDB database
+async function populateItemsDB(coursesJSON) {
+ try {
+   const courses = JSON.parse(decodeURIComponent(coursesJSON));
+   await Promise.all(courses.map(async (course) => {
+     await putItemDB({
+       id: course.id,
+       courseName: course.courseTitle,
+       courseCoverArt: course.imgUrl,
+       courseUrl: course.courseUrl,
+       courseAuthor: course.courseAuthor,
+     });
+   }));
+   return true;
+ } catch (error) {
+   return false;
+ }
+}
+
+exports.handler = async (event) => {
+ const responseHeaders = {
+   'Access-Control-Allow-Origin': '*',
+   'Access-Control-Allow-Headers': '*',
+ };
+
+ if (!event.queryStringParameters) {
+   return {
+     statusCode: 400,
+     headers: responseHeaders,
+     body: JSON.stringify({
+       success: false,
+       error: 'Invalid Request: Action not provided',
+     }),
+   };
+ }
+
+ // The following variable stores the value of the query parameters in the request
+ const requestData = event.queryStringParameters;
+
+ // The following variable stores the action to be performed
+ const requestAction = requestData.action;
+
+ // The following variable stores the course ID if it exists
+ // in the event arguments
+ const courseId = Number(requestData.id);
+
+ // The following conditions get executed when the Lambda function
+ // is invoked
+ switch (requestAction) {
+   // The case when the request query is to get all courses
+   case 'allCourses':
+     const allCourses = await getAllItemsDB();
+
+     if (allCourses.error) {
+       return {
+         statusCode: 400,
+         headers: responseHeaders,
+         body: JSON.stringify({
+           success: false,
+           error: `Unable to process request for ${requestAction}: ${allCourses.error}`,
+         }),
+       };
+     }
+
+     // Returning response
+     return {
+       statusCode: 200,
+       headers: responseHeaders,
+       body: JSON.stringify({
+         success: true,
+         action: requestAction,
+         allCourses,
+       }),
+     };
+
+     // The case when the request query is to add a new course
+   case 'addCourse':
+     const addCourse = await putItemDB(requestData);
+
+     if (addCourse.error) {
+       return {
+         statusCode: 400,
+         headers: responseHeaders,
+         body: JSON.stringify({
+           success: false,
+           error: `Unable to process request for ${requestAction}: ${addCourse.error}`,
+         }),
+       };
+     }
+
+     // Returning response
+     return {
+       statusCode: 200,
+       headers: responseHeaders,
+       body: JSON.stringify({
+         success: true,
+         action: requestAction,
+       }),
+     };
+
+     // The case when the request query is to edit an existing course
+   case 'editCourse':
+     const editCourse = await updateItemDB(requestData);
+
+     if (editCourse.error) {
+       return {
+         statusCode: 400,
+         headers: responseHeaders,
+         body: JSON.stringify({
+           success: false,
+           error: `Unable to process request for ${requestAction}: ${editCourse.error}`,
+         }),
+       };
+     }
+
+     // Returning response
+     return {
+       statusCode: 200,
+       headers: responseHeaders,
+       body: JSON.stringify({
+         success: true,
+         action: requestAction,
+       }),
+     };
+
+     // The case when the request query is to edit an existing course
+   case 'removeCourse':
+     const removeCourse = await deleteItemDB(courseId);
+
+     if (removeCourse.error) {
+       return {
+         statusCode: 400,
+         headers: responseHeaders,
+         body: JSON.stringify({
+           success: false,
+           error: `Unable to process request for ${requestAction}: ${removeCourse.error}`,
+         }),
+       };
+     }
+
+     // Returning response
+     return {
+       statusCode: 200,
+       headers: responseHeaders,
+       body: JSON.stringify({
+         success: true,
+         action: requestAction,
+       }),
+     };
+
+   case 'populateCourses':
+     const poulateCourses = await populateItemsDB(requestData.data);
+
+     if (!poulateCourses) {
+       return {
+         statusCode: 400,
+         headers: responseHeaders,
+         body: JSON.stringify({
+           success: false,
+           error: `Unable to process request for ${requestAction}`,
+         }),
+       };
+     }
+
+     // Returning response
+     return {
+       statusCode: 200,
+       headers: responseHeaders,
+       body: JSON.stringify({
+         success: true,
+         action: requestAction,
+       }),
+     };
+
+     // The default case when the field itself is unidentified
+   default:
+     return {
+       statusCode: 400,
+       headers: responseHeaders,
+       body: JSON.stringify({
+         success: false,
+         error: `Invalid Request: Action ${requestAction} ${typeof requestAction} not found`,
+       }),
+     };
+ }
+};
+
+
+
+```
+
+
+
 
 
 
