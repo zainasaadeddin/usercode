@@ -156,7 +156,9 @@ However, we won’t deploy it to the AWS Cloud yet and only configure it locally
 
 To add a DynamoDB storage, follow these steps:
 To begin initializing storage for this Amplify project, execute the following command in the VS Code workspace terminal on the right:
-amplify add storage
+
+**amplify add storage**
+
 
 Select the NoSQL Database option and press the “Enter” key. Amplify will begin configuring a DynamoDB table as storage because that’s the NoSQL database on the AWS Cloud:
 ? Select from one of the below mentioned services: 
@@ -233,11 +235,11 @@ To verify the status of the back-end services created till now, execute the foll
 If all the resources were set correctly, we’ll get the following response in the terminal:
     Current Environment: dev
 
-┌──────────┬───────────────┬───────────┬───────────────────┐
-│ Category │ Resource name │ Operation │ Provider plugin   │
-├──────────┼───────────────┼───────────┼───────────────────┤
-│ Storage  │ coursesTable  │ Create    │ awscloudformation │
-└──────────┴───────────────┴───────────┴───────────────────┘
+
+
+Category | Resource name | Operation | Provider plugin| 
+--- | --- | --- | --- |--- |--- |--- |--- |--- |--- |
+Storage | coursesTable | Create | awscloudformation | 
 
 **Congratulations!** you’ve successfully configured the storage!!.
 
