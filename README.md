@@ -121,6 +121,23 @@ Some next steps:
 ### Verify changes on the AWS Management Console
 
 
+We can verify the successful creation of our Amplify project on the AWS Cloud by going to the AWS Management Console and following these steps:
+
+* Open the AWS Management Console associated with this lab by clicking the “Open Console” button in the top-right corner.
+Search for “Amplify” on the AWS Management Console and click the “AWS Amplify” service from the search results. This takes us to the Amplify dashboard.
+
+* Under the “All apps” section, there will be the reactclientapp Amplify app. Open this app and open the “Backend environments” tab.
+  
+* Under the “Backend environments” tab, click the “Actions” drop-down menu and click the “View details” option.
+  
+* Here, we can observe all deployments that have happened till now. To get a more detailed response, click the “View in CloudFormation” button to open the CloudFormation service that actually deployed these AWS resources as a CloudFormation stack.
+  
+* On the CloudFormation dashboard, open the “Events” tab to check the event log of the successes and failures of the created AWS resources.
+Open the “Resources” tab to check what AWS resources the suggested Amplify services have created.
+
+**Congratulations**! We’ve successfully configured an Amplify project for our React app. This can be verified by the presence of the amplify folder under the react-client-app directory!!
+
+
 
 
 
