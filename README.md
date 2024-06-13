@@ -22,3 +22,50 @@ API management: Amplify allows us to easily create and manage REST and GraphQL A
 
 * Hosting and deployment: Amplify provides hosting and deployment services that enable developers to quickly deploy and host their applications on the AWS Cloud.
 Serverless computations: We can integrate AWS Lambda functions with Amplify applications to perform serverless computations.
+
+In this group lab project, we’ll explore the different ways we can use the AWS Amplify service to discover, create, and deploy different back-end services. We’ll also deploy and host a React web application on the AWS Cloud, resulting in us deploying an entire end-to-end web application on the cloud. The React web application we’ll use is a demo courses dashboard application that will provide a list of some of the courses on Educative and allow us to add, edit, and delete course data on the dashboard.
+
+Here are some general guidelines that must be followed to complete this lab:
+
+All changes in any code files in the VS Code workspace will be saved automatically, so we don’t have to do anything to save them. All saved changes will persist throughout the lab.
+When using the AWS Management Console, ensure that you select the us-east-1 region to avoid issues while working on this lab. To change the default region on your AWS Management Console, follow these steps:
+
+Inside the AWS navigation bar, click the region drop-down menu at the top-right corner next to your username and select the us-east-1 US East (N. Virginia) option as the default region for the cloud console. Throughout this lab, ensure that you’re working within the us-east-1 region.
+Using the same resource names as suggested in the lab is essential. For instance, if you are instructed to name a Lambda function as LambdaBackendService, choosing any other name for the function may not be possible.
+
+
+Let’s begin this lab to develop and deploy an end-to-end web application using AWS Amplify.
+
+1. set up the AWS CLI and AWS Amplify CLI on your local system on your machine.
+
+Execute the following commands to install the AWS CLI 2:
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+
+unzip awscliv2.zip
+
+./aws/install
+
+Execute the following command to install the AWS Amplify CLI:
+
+npm install -y --global @aws-amplify/cli
+
+
+Inside the visual studio code:
+
+
+2. Executes the *aws configure* command on the root directory add your AWS credentials already. the default region to be *us-east-1* because that’s where we want all our cloud resources to be created. Press any key to close the task terminal and proceed ahead.
+
+3. Now, navigate to the directory of the react-client-app project we’ve already set up by executing the following command in the workspace:
+cd react-client-app. Now, to begin initializing Amplify for this project, execute the following command at the root of the react-client-app directory:
+
+*amplify init*
+
+
+
+
+
+
+
+
+
+
