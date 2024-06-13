@@ -6,4 +6,4 @@ The following is the high-level architecture diagram of the infrastructure you�
 
 
 
-!high-level architecture diagram of the infrastructure you’ll create in our Cloud Lab]((https://ibb.co/fDMygcd))
+!high-level architecture diagram of the infrastructure you’ll create in our Cloud Lab](https://ibb.co/fDMygcd)
