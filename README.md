@@ -1,4 +1,4 @@
-## AWS Amplify
+# Deploye a complete end-to-end web application using AWS Amplify 
 
 AWS Amplify is an Amazon service that helps to quickly build and deploy full-stack mobile and web applications. It also provides a CLI toolchain that allows for deployment directly from the IDE without going to the AWS Management Console.
 
@@ -806,6 +806,217 @@ current Environment: dev
 
 
 **Congratulations!** you’ve successfully configured a function!!.
+
+
+## Set Up a REST API on API Gateway
+
+In AWS Amplify, an api refers to a back-end API, which can either be a GraphQL or REST API. We need a back-end API to create and manage our client applications. In this lab, we’ll model this back-end API as a REST API, which can easily be managed through the AWS API Gateway service. API Gateway is an AWS service where we can create, manage, and deploy different APIs on the AWS Cloud.
+In this task, we’ll configure a REST API on API Gateway. We’ll direct all back-end queries through the endpoint of this API, which connects with the Lambda function that fetches and processes the course data from the DynamoDB table and returns it to API Gateway, which in turn sends the data to our React web application that requested it.
+If the API Gateway API and all the Amplify-configured resources configured till now are deployed to the AWS cloud
+
+
+
+Add an API Gateway REST API
+
+* To add an API Gateway REST API, follow these steps:
+* To begin initializing an API for this Amplify project, execute the following command in the VS Code workspace terminal on the right:
+
+
+*amplify add api*
+
+
+
+Select the “REST” option and press the “Enter” key to create a simple REST API:
+? Select from one of the below mentioned services: (Use arrow keys)
+  GraphQL 
+❯ REST 
+Type “backendService” in the prompt that appears and press the “Enter” key to set backendService as the reference name for the REST API:
+? Provide a friendly name for your resource to be used as a label for this category in the project: › backendService
+
+
+Type “/courses” in the prompt that appears and press the “Enter” key to set /courses as the endpoint path for the REST API:
+? Provide a path (e.g., /book/{isbn}): › /courses 
+
+
+Select the “Use a Lambda function already added in the current Amplify project” option and press “Enter” to add the Lambda function we previously configured as the source for the REST API:
+? Choose a Lambda source …  (Use arrow keys or type to filter)
+  Create a new Lambda function
+❯ Use a Lambda function already added in the current Amplify project
+If there’s only one function in the Amplify project, Amplify will automatically select and add it as the source on our behalf without any input. This is what happens in our case, and we get the following response from Amplify:
+Only one option for [Choose the Lambda function to invoke by this path]. Selecting [LambdaBackendService].
+
+
+Press “n” because we don’t need to restrict any access to the API, so we can easily test and connect with it.
+? Restrict API access? (y/N) › n
+
+
+? Do you want to add another path? (y/N) › n
+
+
+Once Amplify locally creates the configuration files for the REST API, we’ll get the following message in the terminal:
+✅ Successfully added resource backendService locally
+
+
+To verify the status of the back-end services created till now, execute the following command:
+
+*amplify status*
+
+If all resources are set correctly, we’ll get the following response in the terminal:
+
+Current·Environment:·dev
+
+| Category | Resource name    | Operation   |   Provider plugin   |
+| :---:   | :---: | :---: |:---: |
+| Storage | coursesTable   | Create   | awscloudformation   |
+| Function | LambdaBackendService   | Create   | awscloudformation   |
+| Api | backendService   | Create   | awscloudformation   |
+
+**Congratulations!** you successfully configured an API!
+
+## Push Back-End Resources to the AWS Cloud
+
+In this stage, we’ll finally deploy all our local back-end resources created using AWS Amplify to the AWS Cloud. Amplify utilizes the AWS CloudFormation service to perform this deployment to create these resources. The CloudFormation service allows developers to use stacks to maintain their project infrastructure according to their requirements. Developers can define AWS resources for their stacks using a CloudFormation template and don’t have to individually create each resource.
+After the completion of this task and the deployment of all the resources on the AWS Cloud, the architecture diagram of our actual AWS infrastructure will be as follows:
+
+* Deploy all local resources to the AWS Cloud
+
+* To push all local Amplify-generated back-end resources to the AWS Cloud, follow these steps:
+* To begin pushing all Amplify project resources to the AWS Cloud, execute the following command in the VS Code workspace terminal on the right:
+
+*amplify push*
+
+Amplify should begin pulling the back-end dev environment from the AWS Cloud. This might take a few seconds. Once done, Amplify will display the CloudFormation operation to apply on all Amplify resources, which should all be “Create” at this stage. Press “y” to acknowledge that we want to proceed ahead with the deployment:
+
+  Current Environment: dev
+  
+| Category | Resource name    | Operation   |   Provider plugin   |
+| :---:   | :---: | :---: |:---: |
+| Storage | coursesTable   | Create   | awscloudformation   |
+| Function | LambdaBackendService   | Create   | awscloudformation   |
+| Api | backendService   | Create   | awscloudformation   |
+
+✔ Are you sure you want to continue? (Y/n) · yes
+
+The deployment will take some time to complete, and Amplify will display the progress in the meantime. Once the deployment is complete, we’ll be greeted with a response similar to the following:
+Deployment state saved successfully.
+
+REST API endpoint: https://<API_ID>.execute-api.us-east-1.amazonaws.com/dev
+
+Copy and save the REST API endpoint from the response somewhere safe. We should have an AWS-defined API ID, in the URL in place of <API_ID>, like in the sample response above.
+We can test out this API endpoint by copy-pasting it into a new tab with the /courses?action=allCourses path appended in front of it.
+
+If you encounter the following error, it means that you’ve provided the wrong path for the API URL. Please make sure the path appended in front of the backend URL is as described above.
+
+
+
+
+## Verify changes on the AWS Management Console
+
+We can verify the successful creation of all back-end resources on the AWS Cloud by going to the AWS Management Console and following these steps:
+Search for “Amplify” on the AWS Management Console and click the “AWS Amplify” service from the search results. This takes us to the Amplify dashboard.
+
+*Under the “All apps” section, there will be the reactclientapp Amplify app. Open this app and open the “Backend environments” tab.
+
+* Under the “Backend environments” tab, click the “Actions” drop-down menu and select the “View details” option.
+
+* Here, we can observe all new deployments that have happened till now. To get a more detailed response, click the “View in CloudFormation” button to open the CloudFormation service that deployed these AWS resources as a CloudFormation stack.
+
+* On the CloudFormation dashboard, open the “Resources” tab to check what AWS resources were created. Using the “Physical ID” column, we can explore the different IAM, Lambda, API Gateway, and DynamoDB resources created directly on the AWS Management Console.
+
+ We might also have to go into some of the nested stacks to find some resources.
+
+*Congratulations!* Using the Amplify service, you’ve successfully configured the complete back-end service workflow on the AWS Cloud for our React app.
+
+
+## Test React Application Locally
+
+In this stage, we’ll finally explore the React client application for which we set up Amplify and created all these resources.
+Application workflow
+
+* This demo application is a dashboard application that provides a list of courses on the same page and allows us to add, edit, and delete courses on the same page. The workflow of the application is as follows:
+
+* The homepage shows the list of courses.
+* If our list is empty, click the “Click Here to Auto-Populate Mock Course Data” button to instantly populate several courses in the database.
+
+*Scroll down to the end of the page, where the “Add a Course” form will be. We need to fill in all the fields and click the “Add Course” icon to add a course.
+For any course, click the “Open Course Link” icon to open the course link.
+
+*Click the “Edit Course” icon to open the course editor on the same card for any course. Click the “Save changes” button to update the course and the “Discard Changes” button to return to the preview mode.
+
+click the “Delete Course” button to open the prompt to delete the course. Click the “Yes” button to permanently delete the course from the database.
+
+Run the application:
+
+The VS Code workspace on the right contains the entire code of our React application in the react-client-app directory. Before running the application, we must add the REST API Endpoint URL we copied previously. In case we still need to retrieve the URL, simply execute the following command in the VS Code workspace and retrieve the URL under “REST API endpoint:”
+
+Follow these steps to run the application:
+
+Ensure that our client has the REST API endpoint URL to connect with the back-end services. 
+* To do so, replace the {{BACKEND_API_URl}} string with the previously copied REST API endpoint URL in the react-client-app/src/hooks/useFetch.js file on line 13.
+* For ease, the useFetch.js file can be easily opened by executing the following command:
+
+code /usercode/react-client-app/src/hooks/useFetch.js
+
+Now, we can run the demo application below by executing the following command in the VS Code terminal:
+
+*npm start*
+
+When the React development server starts, copy and paste the following URL into a new browser tab to test the client application currently running on localhost.
+
+
+## Final stage: Publish React Application to the AWS Cloud
+
+You’ll finally deploy and publicly host our React application on the AWS Cloud using the Amplify service. To do so, we’ll be using AWS Amplify’s hosting service.
+After the completion of this task and the deployment of the client application on the AWS Cloud
+
+* First, terminate the localhost session for our React application in the VS Code workspace terminal by pressing the “Control + C” keys on the terminal.
+
+To begin initializing hosting for this Amplify project, execute the following command in the VS Code workspace terminal on the right:
+
+#### Deploy hosting logic to the AWS Cloud
+
+
+* To begin initializing hosting for this Amplify project, execute the following command in the VS Code workspace terminal on the right:
+
+*amplify add hosting*
+
+
+Select the “Hosting with Amplify Console (...” option and press the “Enter” key:
+? Select the plugin module to execute …  (Use arrow keys or type to filter)
+❯ Hosting with Amplify Console (Managed hosting with custom domains, Continuous deployment)
+  Amazon CloudFront and S3
+Select the “Manual deployment” option and press the “Enter” key because we want to manually deploy our application once instead of implementing a complex continuous deployment logic:
+? Choose a type (Use arrow keys)
+  Continuous deployment (Git-based deployments) 
+❯ Manual deployment 
+  Learn more 
+Upon the successful creation of the hosting resources, we’ll be greeted with the following response:
+You can now publish your app using the following command:
+
+
+*Command: amplify publish*
+
+Now, execute the following command in the VS Code terminal to push and publish the React application to the AWS Cloud:
+amplify publish
+Amplify should begin pulling the back-end dev environment from the AWS Cloud. This might take a few seconds. Once done, Amplify will display the CloudFormation operation to apply on all Amplify resources, which should be “Create” for only the amplifyhosting resource. Press “y” to acknowledge that we want to proceed ahead with the deployment:
+   Current Environment: dev    
+
+| Category | Resource name    | Operation   |   Provider plugin   |
+| :---:   | :---: | :---: |:---: |
+| Storage | coursesTable   | Create   | awscloudformation   |
+| Function | LambdaBackendService   | Create   | awscloudformation   |
+| Api | backendService   | Create   | awscloudformation   |
+
+✔ Are you sure you want to continue? (Y/n) · yes
+
+The application deployment will take some time to complete, and Amplify will display the progress in the meantime. Once the deployment is complete, we’ll be greeted with a response end similar to the following:
+✔ Zipping artifacts completed.
+✔ Deployment complete!
+https://dev.<APP_ID>.amplifyapp.com
+
+
+**Copy and paste the deployment URL in a new browser tab to test the client application currently hosted publicly on AWS.
+Congratulations! We’ve successfully deployed a complete end-to-end web application using AWS Amplify and successfully tested it.**
 
 
 
