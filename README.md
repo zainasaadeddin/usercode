@@ -627,12 +627,185 @@ exports.handler = async (event) => {
 ```
 
 
+* In the Lambda function above, we’ve essentially defined all operations for our course dashboard application. We’ve used the AWS SDK for JavaScript (aws-sdk) to interact with the DynamoDB table to add a new course to the list, edit or delete a specific course in the list, or retrieve the complete course list. We’ll pass any attributes of the course as query parameters in the request to the Lambda function. One additional query parameter that we’ll pass will be the action parameter that defines what type of operation we want to perform.
+
+* Now, we need to edit the LambdaBackendService-cloudformation-template.json file in the LambdaBackendService directory, which is one parent directory above the folder from where we edited the src/index.js file of our Lambda function. The LambdaBackendService-cloudformation-template.json file represents the CloudFormation template for creating the Lambda resources when we deploy it. Execute the following command to quickly open the LambdaBackendService-cloudformation-template.json file in the VS Code workspace:
+
+* code /usercode/react-client-app/amplify/backend/function/LambdaBackendService/LambdaBackendService-cloudformation-template.json
+
+* Copy the code below and replace the entire template code in the LambdaBackendService-cloudformation-template.json file with it.
+
+```
+
+{
+   "AWSTemplateFormatVersion": "2010-09-09",
+   "Description": "Custom Lambda function template for AWS Amplify",
+   "Parameters": {
+       "CloudWatchRule": {
+           "Type": "String",
+           "Default": "NONE",
+           "Description": " Schedule Expression"
+       },
+       "deploymentBucketName": {
+           "Type": "String"
+       },
+       "env": {
+           "Type": "String"
+       },
+       "s3Key": {
+           "Type": "String"
+       },
+       "storagecoursesTableName": {
+           "Type": "String",
+           "Default": "storagecoursesTableName"
+       },
+       "storagecoursesTableArn": {
+           "Type": "String",
+           "Default": "storagecoursesTableArn"
+       }
+   },
+   "Conditions": {
+       "ShouldNotCreateEnvResources": {
+           "Fn::Equals": [
+               {
+                   "Ref": "env"
+               },
+               "NONE"
+           ]
+       }
+   },
+   "Resources": {
+       "LambdaFunction": {
+           "Type": "AWS::Lambda::Function",
+           "Metadata": {
+               "aws:asset:path": "./src",
+               "aws:asset:property": "Code"
+           },
+           "Properties": {
+               "Code": {
+                   "S3Bucket": {
+                       "Ref": "deploymentBucketName"
+                   },
+                   "S3Key": {
+                       "Ref": "s3Key"
+                   }
+               },
+               "Handler": "index.handler",
+               "FunctionName": {
+                   "Fn::If": [
+                       "ShouldNotCreateEnvResources",
+                       "LambdaBackendService",
+                       {
+                           "Fn::Join": [
+                               "",
+                               [
+                                   "LambdaBackendService",
+                                   "-",
+                                   {
+                                       "Ref": "env"
+                                   }
+                               ]
+                           ]
+                       }
+                   ]
+               },
+               "Environment": {
+                   "Variables": {
+                       "ENV": {
+                           "Ref": "env"
+                       },
+                       "REGION": {
+                           "Ref": "AWS::Region"
+                       }
+                   }
+               },
+               "Role": {
+                   "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/LambdaRole"
+               },
+               "Runtime": "nodejs18.x",
+               "Layers": [],
+               "Timeout": 25
+           }
+       },
+       "LambdaExecutionRole": {
+           "Type": "AWS::IAM::Role",
+           "Properties": {
+               "RoleName": "LambdaExecutionRole",
+               "AssumeRolePolicyDocument": {
+                   "Version": "2012-10-17",
+                   "Statement": [
+                       {
+                           "Effect": "Allow",
+                           "Principal": {
+                               "Service": [
+                                   "lambda.amazonaws.com"
+                               ]
+                           },
+                           "Action": [
+                               "sts:AssumeRole"
+                           ]
+                       }
+                   ]
+               }
+           }
+       }
+   },
+   "Outputs": {
+       "Name": {
+           "Value": {
+               "Ref": "LambdaFunction"
+           }
+       },
+       "Arn": {
+           "Value": {
+               "Fn::GetAtt": [
+                   "LambdaFunction",
+                   "Arn"
+               ]
+           }
+       },
+       "Region": {
+           "Value": {
+               "Ref": "AWS::Region"
+           }
+       },
+       "LambdaExecutionRoleArn": {
+           "Value": {
+               "Fn::GetAtt": [
+                   "LambdaExecutionRole",
+                   "Arn"
+               ]
+           }
+       }
+   }
+}
+
+
+```
+
+
+you need to perform this action to attach the LambdaRole IAM role we’ve already created for this Lambda function because we don’t provide any permissions to create or modify policies, which the default template requires.
+
+* Now, execute the following command to rebuild our local configuration files with the updated CloudFormation template for the Lambda function:
+
+*amplify build*
+
+To verify the status of the back-end services created till now, execute the following command:
+
+*amplify status*
+
+* If all the resources are set correctly, we’ll get the following response in the terminal:
+current Environment: dev
 
 
 
+| Category | Resource name    | Operation   |   Provider plugin   |
+| :---:   | :---: | :---: |:---: |
+| Storage | coursesTable   | Create   | awscloudformation   |
+| Function | LambdaBackendService   | Create   | awscloudformation   |
 
 
-
+**Congratulations!** you’ve successfully configured a function!!.
 
 
 
