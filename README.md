@@ -63,6 +63,7 @@ cd react-client-app. Now, to begin initializing Amplify for this project, execut
 *amplify init*
 
 4. Press the “Enter“ key to use the default suggested name by the Amplify CLI. The suggested name should be reactclientapp.
+   
 ? Enter a name for the project (reactclientapp) 
 For the following prompt, type “y” and press the “Enter” key to initialize the Amplify project with the default configurations and settings that Amplify auto-detected for our React project.
 
@@ -135,7 +136,20 @@ Search for “Amplify” on the AWS Management Console and click the “AWS Ampl
 * On the CloudFormation dashboard, open the “Events” tab to check the event log of the successes and failures of the created AWS resources.
 Open the “Resources” tab to check what AWS resources the suggested Amplify services have created.
 
-**Congratulations**! We’ve successfully configured an Amplify project for our React app. This can be verified by the presence of the amplify folder under the react-client-app directory!!
+**Congratulations**! You’ve successfully configured an Amplify project for our React app. This can be verified by the presence of the amplify folder under the react-client-app directory!!
+
+
+5. Set Up DynamoDB Storage
+
+   Storage is one of the essential resources in end-to-end web applications to persist and manage user data, and the DynamoDB service is an excellent AWS service to handle the storage of our client applications. AWS DynamoDB is a fully managed NoSQL relational database service through which we can create and manage our databases with ease.
+   
+In this task, we’ll configure a DynamoDB table to store our back-end resources on the AWS Cloud to store the course data for our web application. We’ll define the following attributes for the course to be saved in the DynamoDB database:
+
+* ID: This attribute defines the ID of the course.
+* CourseName: This attribute defines the name of the course.
+* CoverArt: This attribute defines the cover art of the course.
+* CourseUrl: This attribute defines the Educative URL of the course.
+* Author: This attribute defines the author of the course.
 
 
 
