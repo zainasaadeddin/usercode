@@ -236,10 +236,11 @@ If all the resources were set correctly, we’ll get the following response in t
     Current Environment: dev
 
 
+| Category | Resource name    | Operation   |   Provider plugin   |
+| :---:   | :---: | :---: |:---: |
+| Storage | coursesTable   | Create   | awscloudformation   |
 
-Category | Resource name | Operation | Provider plugin| 
---- | --- | --- | --- |--- |--- |--- |--- |--- |--- |
-Storage | coursesTable | Create | awscloudformation | 
+
 
 **Congratulations!** you’ve successfully configured the storage!!.
 
