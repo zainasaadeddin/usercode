@@ -138,18 +138,112 @@ Open the “Resources” tab to check what AWS resources the suggested Amplify s
 
 **Congratulations**! You’ve successfully configured an Amplify project for our React app. This can be verified by the presence of the amplify folder under the react-client-app directory!!
 
-
-5. Set Up DynamoDB Storage
+## Set Up DynamoDB Storage
 
    Storage is one of the essential resources in end-to-end web applications to persist and manage user data, and the DynamoDB service is an excellent AWS service to handle the storage of our client applications. AWS DynamoDB is a fully managed NoSQL relational database service through which we can create and manage our databases with ease.
    
-In this task, we’ll configure a DynamoDB table to store our back-end resources on the AWS Cloud to store the course data for our web application. We’ll define the following attributes for the course to be saved in the DynamoDB database:
+In this step, you’ll configure a DynamoDB table to store our back-end resources on the AWS Cloud to store the course data for our web application. We’ll define the following attributes for the course to be saved in the DynamoDB database:
 
 * ID: This attribute defines the ID of the course.
 * CourseName: This attribute defines the name of the course.
 * CoverArt: This attribute defines the cover art of the course.
 * CourseUrl: This attribute defines the Educative URL of the course.
 * Author: This attribute defines the author of the course.
+
+However, we won’t deploy it to the AWS Cloud yet and only configure it locally. If the DynamoDB table and all the Amplify-configured resources configured till now are deployed to the AWS Cloud, the architecture diagram of our planned AWS infrastructure would be as follows:
+
+5. Add a DynamoDB storage
+
+To add a DynamoDB storage, follow these steps:
+To begin initializing storage for this Amplify project, execute the following command in the VS Code workspace terminal on the right:
+amplify add storage
+
+Select the NoSQL Database option and press the “Enter” key. Amplify will begin configuring a DynamoDB table as storage because that’s the NoSQL database on the AWS Cloud:
+? Select from one of the below mentioned services: 
+  Content (Images, audio, video, etc.) 
+❯ NoSQL Database
+
+
+Type “*coursesTable*” in the prompt that appears and press the “Enter” key to set coursesTable as the reference name for the DynamoDB:
+Provide table name › coursesTable
+
+
+Type “ID” in the next prompt and press the “Enter” key. This sets ID as an attribute in our DynamoDB table:
+
+You can now add columns to the table.
+? What would you like to name this column ›  ID
+
+
+Select the “number” data type and press the “Enter” key. This sets the Number as the data type for the ID attribute.
+? Choose the data type …  (Use arrow keys or type to filter)
+  string
+❯ number
+  binary
+...
+
+Press the “y” key to add another table attribute:
+✔ Would you like to add another column? (Y/n) · yes
+
+Type “CourseName” in the next prompt and press the “Enter” key. This sets CourseName as an attribute in our DynamoDB table:
+? What would you like to name this column ›  CourseName
+
+Select the “string” data type and press the “Enter” key. This sets the String as the data type for the CourseName attribute.
+? Choose the data type …  (Use arrow keys or type to filter)
+❯ string
+  number
+  binary
+...
+
+
+Repeat the previous three steps to create the Author, CourseUrl, and CoverArt attributes, all with the “string” data type.
+Press the “n” key to stop adding any more table attributes.
+
+
+
+✔ Would you like to add another column? (Y/n) · no
+
+
+Select the “ID” attribute and press the “Enter” key. This sets the ID as the partition key for the DynamoDB table.
+? Choose the partition key for the table …  (Use arrow keys or type to filter)
+❯ ID
+  CourseName
+  Author
+  CourseUrl
+  CoverArt
+
+
+Press the “n” key to not add the sort key prompt because we don’t need it.
+Do you want to add a sort key to your table? (Y/n) · no
+
+Press the “n” key to not add any global secondary indexes prompt because we don’t need it.
+✔ Do you want to add global secondary indexes to your table? (Y/n) · no
+
+Press the “n” key to not add a Lambda trigger prompt because we’ll automatically add it when we add a Lambda function in a later task.
+
+Do you want to add a Lambda Trigger for your Table? (y/N) · no
+
+
+Once Amplify locally creates the configuration files for the storage, we’ll get the following message in the terminal:
+✅ Successfully added resource coursesTable locally
+
+To verify the status of the back-end services created till now, execute the following command:
+
+*amplify status*
+
+If all the resources were set correctly, we’ll get the following response in the terminal:
+    Current Environment: dev
+
+┌──────────┬───────────────┬───────────┬───────────────────┐
+│ Category │ Resource name │ Operation │ Provider plugin   │
+├──────────┼───────────────┼───────────┼───────────────────┤
+│ Storage  │ coursesTable  │ Create    │ awscloudformation │
+└──────────┴───────────────┴───────────┴───────────────────┘
+
+**Congratulations!** you’ve successfully configured the storage!!.
+
+
+
+
 
 
 
