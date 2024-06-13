@@ -1,3 +1,5 @@
+## AWS Amplify
+
 AWS Amplify is an Amazon service that helps to quickly build and deploy full-stack mobile and web applications. It also provides a CLI toolchain that allows for deployment directly from the IDE without going to the AWS Management Console.
 
 
@@ -60,7 +62,63 @@ cd react-client-app. Now, to begin initializing Amplify for this project, execut
 
 *amplify init*
 
+4. Press the “Enter“ key to use the default suggested name by the Amplify CLI. The suggested name should be reactclientapp.
+? Enter a name for the project (reactclientapp) 
+For the following prompt, type “y” and press the “Enter” key to initialize the Amplify project with the default configurations and settings that Amplify auto-detected for our React project.
 
+the following configuration will be applied:
+
+
+Project information
+
+| Name: reactclientapp
+| Environment: dev
+| Default editor: Visual Studio Code
+| App type: javascript
+| Javascript framework: react
+| Source Directory Path: src
+| Distribution Directory Path: build
+| Build Command: npm run-script build
+| Start Command: npm run-script start
+
+? Initialize the project with the above configuration? (Y/n) y
+
+
+Amplify will automatically select AWS CloudFormation as the default provider to deploy our services to the AWS Cloud.
+Using default provider  awscloudformation
+
+* Select the AWS profile option and press the “Enter” key to use the default AWS profile already configured previously in the “Startup Script” task:
+?·Select·the·authentication·method·you·want·to·use:·(Use·arrow·keys)
+❯·AWS·profile·
+··AWS·access·keys·
+
+* Select the default option and press the “Enter” key.
+?·Please·choose·the·profile·you·want·to·use·(Use·arrow·keys)
+❯·default·
+
+
+Wait a few minutes for the CloudFormation service to create some of the initial AWS Cloud resources required by the Amplify service. Once the creation has been completed, Amplify will prompt us to mention if we want to share the non-sensitive project configuration data if there are any failures. Type “y” and press the “Enter” to proceed.
+
+✔ Help improve Amplify CLI by sharing non-sensitive project configurations on failures (y/N) · yes
+
+    Thank you for helping us improve Amplify CLI!
+Deployment state saved successfully.
+✔ Initialized provider successfully.
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✅ Initialized your environment successfully.
+✅ Your project has been successfully initialized and connected to the cloud!
+Some next steps:
+
+
+"amplify status" will show you what you've added already and if it's locally configured or deployed
+"amplify add <category>" will allow you to add features like user login or a backend API
+"amplify push" will build all your local backend resources and provision it in the cloud
+"amplify console" to open the Amplify Console and view your project status
+"amplify publish" will build all your local backend and frontend resources (if you have hosting category added) and provision it in the cloud
+
+### Verify changes on the AWS Management Console
 
 
 
