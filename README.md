@@ -59,12 +59,12 @@ npm install -y --global @aws-amplify/cli
 Inside the visual studio code:
 
 
-2. Executes the *aws configure* command on the root directory add your AWS credentials already. the default region to be *us-east-1* because that’s where we want all our cloud resources to be created. Press any key to close the task terminal and proceed ahead.
+2. Executes the **aws configure** command on the root directory add your AWS credentials already. the default region to be *us-east-1* because that’s where we want all our cloud resources to be created. Press any key to close the task terminal and proceed ahead.
 
 3. Now, navigate to the directory of the react-client-app project we’ve already set up by executing the following command in the workspace:
 cd react-client-app. Now, to begin initializing Amplify for this project, execute the following command at the root of the react-client-app directory:
 
-*amplify init*
+**amplify init**
 
 4. Press the “Enter“ key to use the default suggested name by the Amplify CLI. The suggested name should be reactclientapp.
    
