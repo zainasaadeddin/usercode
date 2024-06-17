@@ -142,6 +142,9 @@ Open the “Resources” tab to check what AWS resources the suggested Amplify s
 
 **Congratulations**! You’ve successfully configured an Amplify project for our React app. This can be verified by the presence of the amplify folder under the react-client-app directory!!
 
+## important note: Inside IAM ROLES, we have to create a role LambdaRole and attach polices for amplify and DynamoDB
+
+
 ## Set Up DynamoDB Storage
 
    Storage is one of the essential resources in end-to-end web applications to persist and manage user data, and the DynamoDB service is an excellent AWS service to handle the storage of our client applications. AWS DynamoDB is a fully managed NoSQL relational database service through which we can create and manage our databases with ease.
